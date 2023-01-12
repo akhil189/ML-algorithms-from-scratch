@@ -3,6 +3,9 @@ My Implementation of Classical Machine Learning Algorithms from scratch using Nu
 
 The modules are at [ml-algs](https://github.com/akhil189/ML-algorithms-from-scratch/tree/main/ml_algs)
 
-**Note: [This is work in progress]**
+The following algorithms are implemented
+1. Linear Regression with Normal Equation, Batch, Mini-batch and Online Gradient Descent with l1, l2 regularizations.
+2. Logistic Regression
+3. Support Vector Machines (soft-margin dual-form)
 
-1. Linear Regression with Normal Equation, Batch, Mini-batch and Online Gradient Descent
+**Note: [This is work in progress]**
