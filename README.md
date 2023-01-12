@@ -7,5 +7,6 @@ The following algorithms are implemented
 1. Linear Regression with Normal Equation, Batch, Mini-batch and Online Gradient Descent with l1, l2 regularizations.
 2. Logistic Regression
 3. Support Vector Machines (soft-margin dual-form)
+4. Support Vector Machines (hard-margin dual-form)
 
 **Note: [This is work in progress]**
