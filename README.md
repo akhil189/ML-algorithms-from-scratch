@@ -2,7 +2,7 @@
 
 **My Implementation of the classical Machine Learning algorithms from scratch using only NumPy**
 
-- Algorithms can be found here - [ml-algs](https://github.com/akhil189/ML-algorithms-from-scratch/tree/main/ml_algs) (implemented as Python modules)
+- Algorithms can be found here - [ml_algs](https://github.com/akhil189/ML-algorithms-from-scratch/tree/main/ml_algs) (implemented as Python modules)
 - Usage examples for each algorithm - [demo_notebooks](https://github.com/akhil189/ML-algorithms-from-scratch/tree/main/ml_algs_demo_notebooks).
 
 
