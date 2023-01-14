@@ -4,92 +4,157 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import seaborn as sns
-
+from typing import Tuple
 class LogisticRegression:
+    """
+    Parameters
+    ----------
+        learning_rate: The learning rate for gradient descent, default is 0.001.
 
-    def __init__(self, learningRate, tolerance, maxIteration = 5000, outliers = None):
+        max_iterations: The maximum number of iterations, default is 5000.
 
-        self.learningRate = learningRate
+        tolerance: The tolerance of convergence, default is 1e-3.
+
+    Attributes
+    ----------
+        theta: The learnt parameters.
+
+        errors: The history of error sequence from gradient descent.
+    """
+
+    def __init__(self,
+                 learning_rate: float = 0.001,
+                 max_iterations: int = 5000,
+                 tolerance: float = 0.001):
+        """Inits LogisticRegression class with default parameters."""
+
+        self.learning_rate = learning_rate
         self.tolerance = tolerance
-        self.maxIteration = maxIteration
-        self.outliers = outliers
-  
-    def datasetReader(self):
-        train_df = pd.read_excel('./datasets/data.xls', sheet_name='2004--2005 Data')
-        test_df = pd.read_excel('./datasets/data.xls', sheet_name='2004--2007 Data')
-        train_df, test_df = np.array(train_df, dtype=np.float64), np.array(test_df, dtype=np.float64)
+        self.max_iterations = max_iterations
 
-        X_train, y_train = train_df[:, 1:], train_df[:, 0]
-        X_test, y_test = test_df[:, 1:], test_df[:, 0]
+    def sigmoid(self, z) -> float:
+        """Sigmoid function."""
 
-        return X_train, y_train, X_test, y_test
-
-    def addX0(self, X):
-        return np.column_stack([np.ones([X.shape[0],1]), X])
-    
-    def sigmoid(self, z):
         sig = 1/( 1+np.exp(-z) )
         return sig
 
-    def costFunction(self, X, y):
+    def cost_function(self, X, y, theta) -> float:
+        """Computes cost function.
+        
+        Args:
+            X: The data matrix, shape = (n_samples, n_features + 1).
 
-        #approach 1
-        #pred_ = np.log(np.ones(X.shape[0]) + np.exp(X.dot(self.w))) - X.dot(self.w).dot(y) # Negative Log-likelihood
-        pred_ = np.log(np.ones(X.shape[0]) + np.exp(X.dot(self.w))) - X.dot(self.w)*y
-        cost = pred_.sum()
+            y: The target vector, shape = (n_samples, 1).
 
-        # approach 2
-        # sig = self.sigmoid(X.dot(self.w))
-        # pred_ = y * np.log(sig) + (1-y) * np.log(1-sig)
-        # cost = pred_.sum()
+            theta: The learned parameters, shape = (n_features + 1, 1).
+        
+        Returns:
+            J: The cost function value.
+        """
 
-        # To DO: check which one is better.(speed test)
+        n_samples = X.shape[0]
+        
+        """approach 1: Minimizing NLL"""
+        pred_ = np.log(np.ones(X.shape[0]) + np.exp(X.dot(theta))) - X.dot(theta)*y # Negative Log-likelihood
+        J = (1/n_samples)*pred_.sum()
 
-        return cost
+        """approach 2: Minimizing Cross-Entropy"""
+        # y_hat = self.sigmoid(X.dot(theta))
+        # pred_ = y * np.log(y_hat) + (1-y) * np.log(1-y_hat)
+        # J = (-1/n_samples)*pred_.sum()
 
-    def gradient(self, X,y):
-        sig = self.sigmoid(X.dot(self.w))
-        grad = (sig - y).dot(X)
-        return grad
+        return J
+
+    def cost_derivative(self, X: np.ndarray, y: np.ndarray, theta: np.ndarray) -> np.ndarray:
+        """Computes dJ/dw i.e, derivative of the cost function(NLL) w.r.to theta.
+        
+        Args:
+            X : The Data matrix
+
+            y : The target vector
+
+            theta : The parameters of the model
+            
+        Returns:
+            dJ : The derivative of the cost function(NLL) w.r.to theta, shape = (n_features, 1)
+        """
+
+        n_samples = X.shape[0]
+        y_hat = self.sigmoid(X.dot(theta))
+        dJ = (1 / n_samples) * X.T.dot(y_hat - y)
+        
+        return dJ
   
-    def gradientDescent(self, X, y):
-        costSequence = []
-        lastCost = float('inf')
+    def gradient_descent(self, X, y):
+        """Performs gradient descent.
+        
+        Args:
+            X: The data matrix, shape = (n_samples, n_features + 1).
 
-        for i in tqdm(range(self.maxIteration)):
-            self.w = self.w - self.learningRate * self.gradient(X, y)
-            currentCost = self.costFunction(X, y)
-            diff = lastCost - currentCost
-            lastCost = currentCost
-            costSequence.append(currentCost)
+            y: The target vector, shape = (n_samples, 1).
+        
+        Returns:
+            theta: The learned parameters, shape = (n_features + 1, 1).
+        """
 
-            # can use abs(diff)
-            if abs(diff) < self.tolerance:
+        n_features = X.shape[1]
+        theta = np.zeros(n_features, dtype= np.float64)
+
+        self.errors = []
+        prev_error = float('inf')
+
+        for i in tqdm(range(self.max_iterations)):
+            
+            theta = theta - self.learning_rate * self.cost_derivative(X, y, theta)
+            
+            curr_error = self.cost_function(X, y, theta)
+            self.errors.append(curr_error)
+
+            # Stopping criteria
+            error_diff = prev_error - curr_error
+            if abs(error_diff) < self.tolerance:
                 print("The model stopped - No Further Improvment")
-                break
-        self.plotCost(costSequence)
+                break    
+            prev_error = curr_error
 
-        return
-  
-    def plotCost(self, costSequence):
-        s = np.array(costSequence)
-        t = np.arange(s.size)
+        return theta
 
-        fig, ax = plt.subplots()
-        ax.plot(t, s)
+    def fit(self, X, y) -> None:
+        """Learns the model parameters through gradient descent.
 
-        ax.set(xlabel = 'iterations', ylabel = 'cost', title = 'cost trend')
-        ax.grid()
+        Args:
+            X: The data matrix, shape = (n_samples, n_features).
 
-        plt.legend(bbox_to_anchor = (1.05, 1), shadow=True)
-        plt.show()
+            y: The target vector, shape = (n_samples, 1).
+        """
+        n_samples = X.shape[0]
+        X_train = np.column_stack( (np.ones(shape=(n_samples, 1)), X) )
 
+        self.theta = self.gradient_descent(X_train, y)
+    
     def predict(self, X):
-        sig = self.sigmoid(X.dot(self.w)) # X.dot(w) is same as w.T.dot(X)    
+        """Predicts the target labels.
 
-        return np.around(sig)
+        Args:
+            X: The data matrix, shape = (n_samples, n_features).
+        """
+        n_samples = X.shape[0]
+        X_test = np.column_stack( (np.ones(shape=(n_samples, 1)), X) )
+        y_hat = self.sigmoid(X_test.dot(self.theta)) # X.dot(theta) is same as theta.T.dot(X)    
+        
+        return np.around(y_hat)
 
-    def evaluate(self, y, y_hat):
+    def evaluate(self, y, y_hat) -> Tuple[float, float, float]:
+        """Computes Accuracy, Precision and Recall.
+
+        Args:
+            y: The target vector, shape = (n_samples, 1).
+            
+            y: The predicted label vector, shape = (n_samples, 1).
+        
+        Returns:
+            A Tuple containing the accuracy, precision and recall.
+        """
         y = (y == 1) # same as y.sum()
         y_hat = (y_hat == 1)
 
@@ -99,128 +164,16 @@ class LogisticRegression:
 
         return accuracy, precision, recall
 
-    def runModel(self):
-        self.X_train, self.y_train, self.X_test, self.y_test = self.datasetReader()
-        if self.outliers:
-            self.remove_index(self.outliers)
-        
-        self.w = np.ones(self.X_train.shape[1], dtype= np.float64) * 0
-        
-        print(f'X_train:{self.X_train.shape}, y_train:{self.y_train.shape}')
-        print(f'X_test:{self.X_test.shape}, y_test:{self.y_test.shape}')
-        self.gradientDescent(self.X_train, self.y_train)
-        
-        # print(self.X_train)
-        # print(self.y_train)
-        # print(self.w)
-        
-        y_hat_train = self.predict(self.X_train)
-        accuracy, recall, precision = self.evaluate(self.y_train, y_hat_train)
+    def plotCost(self) -> None:
+        """Plots the cost sequence from gradient descent."""
+        s = np.array(self.errors)
+        t = np.arange(s.size)
 
-        print(f'Training Accuracy: {accuracy}')
-        print(f'Training Precision: {precision}')
-        print(f'Training Recall: {recall}')
+        fig, ax = plt.subplots()
+        ax.plot(t, s)
 
-        y_hat_test = self.predict(self.X_test)
-        accuracy, recall, precision = self.evaluate(self.y_test, y_hat_test)
+        ax.set(xlabel = 'iterations', ylabel = 'cost', title = 'cost trend')
+        ax.grid()
 
-        print(f'Testing Accuracy: {accuracy}')
-        print(f'Testing Precision: {precision}')
-        print(f'Testing Recall: {recall}')
-
-    def remove_index(self, outliers):
-        self.X_train = np.delete(self.X_train, outliers, axis=0)
-        self.y_train = np.delete(self.y_train, outliers, axis=0)
-
-        #self.X_test = np.delete(self.X_test, outliers, axis=0)
-        #self.y_test = np.delete(self.y_test, outliers, axis=0)
-
-    def plot(self):
-        
-        fig = plt.figure(figsize = (12, 8))
-        ax1 = fig.add_subplot(1,2,1, projection = '3d')
-        ax2 = fig.add_subplot(1,2,2, projection = '3d')
-        
-        # Data for three-dimensional scattered points
-        ax1.scatter3D(self.X_train[:, 0], self.X_train[:, 1], 
-                     self.sigmoid(self.X_train.dot(self.w)), 
-                     c = self.y_train[:], cmap='viridis', s=100);
-        ax1.set_title('X_train')
-        ax1.set_xlim3d(55, 80)
-        ax1.set_ylim3d(80, 240)
-        ax1.set_xlabel('$x_1$ feature', fontsize=15)
-        ax1.set_ylabel('$x_2$ feature', fontsize=15, )
-        ax1.set_zlabel('$P(Y = 1|x_1, x_2)$', fontsize=15, rotation = 0)    
-
-        # Plotting for test set
-        # Data for three-dimensional scattered points
-        ax2.scatter3D(self.X_test[:, 0], self.X_test[:, 1], 
-                     self.sigmoid(self.X_test.dot(self.w)), 
-                     c = self.y_test[:], cmap='viridis', s=100);
-        ax2.set_title('X_test')
-        ax2.set_xlim3d(55, 80)
-        ax2.set_ylim3d(80, 240)
-        ax2.set_xlabel('$x_1$ feature', fontsize=15)
-        ax2.set_ylabel('$x_2$ feature', fontsize=15, )
-        ax2.set_zlabel('$P(Y = 1|x_1, x_2)$', fontsize=15, rotation = 0)    
-        plt.show()
-
-    def scatterPlt(self):
-        
-        # evenly sampled points
-        x_min, x_max = 55, 80
-        y_min, y_max = 80, 240
-
-        xx, yy = np.meshgrid(np.linspace(x_min, x_max, 250),
-                              np.linspace(y_min, y_max, 250))
-        grid = np.c_[xx.ravel(), yy.ravel()]
-        probs = grid.dot(self.w).reshape(xx.shape)
-        
-        #f, ax = plt.subplots(figsize=(14,12))
-        f, (ax1, ax2) = plt.subplots(1, 2, figsize=(14,10))
-
-        ax1.contour(xx, yy, probs, levels=[0.5], cmap="Greys", vmin=0, vmax=.6)
-        ax1.scatter(self.X_train[:, 0], self.X_train[:, 1], 
-                    c=self.y_train[:], s=50,
-                    cmap="RdBu", vmin=-.2, vmax=1.2,
-                    edgecolor="white", linewidth=1)
-        
-        ax1.set(xlabel = 'x1 feature', ylabel = 'x2 feature')
-        ax1.set_title('X_train')
-        
-        # Plotting for Test
-        ax2.contour(xx, yy, probs, levels=[0.5], cmap="Greys", vmin=0, vmax=.6)
-        ax2.scatter(self.X_test[:, 0], self.X_test[:, 1], 
-                    c=self.y_test[:], s=50,
-                    cmap="RdBu", vmin=-.2, vmax=1.2,
-                    edgecolor="white", linewidth=1)
-
-        ax2.set(xlabel = 'x1 feature', ylabel = 'x2 feature')
-        ax2.set_title('X_test')
-        plt.show()
-        
-        
-    def plot3D(self):
-        # evenly sampled points
-        x_min, x_max = 55, 80
-        y_min, y_max = 80, 240
-
-        xx, yy = np.meshgrid(np.linspace(x_min, x_max, 250),
-                             np.linspace(y_min, y_max, 250))
-
-        grid = np.c_[xx.ravel(), yy.ravel()]
-        probs = grid.dot(self.w).reshape(xx.shape)
-        fig = plt.figure(figsize=(14,12))
-        ax = plt.axes(projection='3d')
-        ax.contour3D(xx, yy, probs, 50, cmap='binary')
-
-        ax.scatter3D(self.X_train[:, 0], self.X_train[:, 1], 
-                    c=self.y_train[:], s=50,
-                    cmap="RdBu", vmin=-.2, vmax=1.2,
-                    edgecolor="white", linewidth=1)
-
-        ax.set_xlabel('x1')
-        ax.set_ylabel('x2')
-        ax.set_zlabel('probs')
-        ax.set_title('3D contour')
+        plt.legend(bbox_to_anchor = (1.05, 1), shadow=True)
         plt.show()
