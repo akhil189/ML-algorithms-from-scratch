@@ -50,7 +50,7 @@ class LinearRegression:
 
     Attributes
     ----------
-    theta : np.ndarray, shape=(n_features,)
+    theta : np.ndarray, shape=(n_features+1,)
         The learned parameters.
     
     errors : list[float],
@@ -236,7 +236,7 @@ class LinearRegression:
         
         return batches
 
-    def gradient_descent(self, X, y) -> None:
+    def gradient_descent(self, X, y) -> np.ndarray:
         """Performs gradient descent optimization.
 
         Args:
@@ -247,6 +247,7 @@ class LinearRegression:
         Returns:
             theta : The parameter vector, shape = (n_features+1,)
         """
+        
         self.errors = []
         theta = np.zeros(X.shape[1], dtype= float)
 
@@ -281,15 +282,15 @@ class LinearRegression:
 
         return theta
         
-    def fit(self,
-            X: np.ndarray,
-            y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """Learn the parameters of the model i.e., `theta`. 
         
         Args:
             X : Data matrix
 
             y : Target vector
+        Returns:
+            None
         """
 
         n_samples = X.shape[0]

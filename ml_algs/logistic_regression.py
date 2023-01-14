@@ -5,8 +5,10 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import seaborn as sns
 from typing import Tuple
+
 class LogisticRegression:
-    """
+    """Implements Logistic Regression algorithm.
+
     Parameters
     ----------
         learning_rate: The learning rate for gradient descent, default is 0.001.
@@ -17,9 +19,9 @@ class LogisticRegression:
 
     Attributes
     ----------
-        theta: The learnt parameters.
+        theta: np.ndarray, shape=(n_features+1, ) The learnt parameters.
 
-        errors: The history of error sequence from gradient descent.
+        errors: list[float], The history of error sequence from gradient descent.
     """
 
     def __init__(self,
@@ -32,7 +34,7 @@ class LogisticRegression:
         self.tolerance = tolerance
         self.max_iterations = max_iterations
 
-    def sigmoid(self, z) -> float:
+    def sigmoid(self, z: np.ndarray) -> np.ndarray:
         """Sigmoid function."""
 
         sig = 1/( 1+np.exp(-z) )
@@ -85,7 +87,8 @@ class LogisticRegression:
         
         return dJ
   
-    def gradient_descent(self, X, y):
+    def gradient_descent(self, X, y) -> np.ndarray:
+
         """Performs gradient descent.
         
         Args:
@@ -126,17 +129,23 @@ class LogisticRegression:
             X: The data matrix, shape = (n_samples, n_features).
 
             y: The target vector, shape = (n_samples, 1).
+        
+        Returns:
+            None.
         """
         n_samples = X.shape[0]
         X_train = np.column_stack( (np.ones(shape=(n_samples, 1)), X) )
 
         self.theta = self.gradient_descent(X_train, y)
     
-    def predict(self, X):
+    def predict(self, X) -> np.ndarray:
         """Predicts the target labels.
 
         Args:
             X: The data matrix, shape = (n_samples, n_features).
+
+        Returns:
+            The predicted labels, shape = (n_samples, ).
         """
         n_samples = X.shape[0]
         X_test = np.column_stack( (np.ones(shape=(n_samples, 1)), X) )
@@ -155,6 +164,7 @@ class LogisticRegression:
         Returns:
             A Tuple containing the accuracy, precision and recall.
         """
+
         y = (y == 1) # same as y.sum()
         y_hat = (y_hat == 1)
 
@@ -165,7 +175,14 @@ class LogisticRegression:
         return accuracy, precision, recall
 
     def plotCost(self) -> None:
-        """Plots the cost sequence from gradient descent."""
+        """Plots the cost sequence from gradient descent.
+        Args:
+            None
+            
+        Returns:
+            None
+        """
+
         s = np.array(self.errors)
         t = np.arange(s.size)
 
