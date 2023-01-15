@@ -10,7 +10,7 @@ The following algorithms are implemented
 3. Support Vector Machines
     - Hard-margin SVM [![View on GitHub](https://img.shields.io/badge/Python-View%20code-blue?logo=Python)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/ml_algs/svm_hard_margin.py) [![Open Notebook](https://img.shields.io/badge/Jupyter-Open_Notebook-blue?logo=Jupyter)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/demo_notebooks/svm_hard_margin.ipynb)
     - Soft-margin SVM (dual-form) [![View on GitHub](https://img.shields.io/badge/Python-View%20code-blue?logo=Python)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/ml_algs/svm_soft_margin.py) [![Open Notebook](https://img.shields.io/badge/Jupyter-Open_Notebook-blue?logo=Jupyter)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/demo_notebooks/svm_soft_margin.ipynb)
-4. Naive Bayes [![View on GitHub](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/ml_algs/naive_bayes.py)[![Open Notebook](https://img.shields.io/badge/Jupyter-Open_Notebook-blue?logo=Jupyter)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/demo_notebooks/naive_bayes.ipynb)
+4. Naive Bayes [![View on GitHub](https://img.shields.io/badge/Python-View%20code-blue?logo=Python)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/ml_algs/naive_bayes.py) [![Open Notebook](https://img.shields.io/badge/Jupyter-Open_Notebook-blue?logo=Jupyter)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/demo_notebooks/naive_bayes.ipynb)
 
 
 
