@@ -11,7 +11,6 @@ The following algorithms are implemented
     - Hard-margin SVM [![View on GitHub](https://img.shields.io/badge/Python-View%20code-blue?logo=Python)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/ml_algs/svm_hard_margin.py) [![Open Notebook](https://img.shields.io/badge/Jupyter-Open_Notebook-blue?logo=Jupyter)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/demo_notebooks/svm_hard_margin.ipynb)
     - Soft-margin SVM (dual-form) [![View on GitHub](https://img.shields.io/badge/Python-View%20code-blue?logo=Python)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/ml_algs/svm_soft_margin.py) [![Open Notebook](https://img.shields.io/badge/Jupyter-Open_Notebook-blue?logo=Jupyter)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/demo_notebooks/svm_soft_margin.ipynb)
 4. Naive Bayes [![View on GitHub](https://img.shields.io/badge/Python-View%20code-blue?logo=Python)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/ml_algs/naive_bayes.py) [![Open Notebook](https://img.shields.io/badge/Jupyter-Open_Notebook-blue?logo=Jupyter)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/demo_notebooks/naive_bayes.ipynb)
-
-
+5. K Nearest Neighbours(KNN) Classification [![View on GitHub](https://img.shields.io/badge/Python-View%20code-blue?logo=Python)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/ml_algs/knn_classification.py) [![Open Notebook](https://img.shields.io/badge/Jupyter-Open_Notebook-blue?logo=Jupyter)](https://github.com/akhil189/ML-algorithms-from-scratch/blob/main/demo_notebooks/knn_classification.ipynb)
 
 **Note: [This is a work in progress]**
